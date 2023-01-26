@@ -1,0 +1,21 @@
+FROM python:3.8.13 as base
+
+ADD requirements.txt .
+RUN pip3 install -r requirements.txt
+
+ENV PYTHONPATH=$PYTHONPATH:/src/
+
+ADD ./ /src/
+
+WORKDIR /src
+
+FROM base as test
+###RUN ["pytest", "-v", "/src/tests"]
+
+FROM base as build
+ENTRYPOINT ["python3", "/src/ml_service.py"]
+
+RUN pip3 install torch==1.10.0+cpu torchvision==0.11.0+cpu torchaudio==0.10.0 -f https://download.pytorch.org/whl/torch_stable.html
+RUN pip3 install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.10/index.html
+RUN apt-get update
+RUN apt-get install ffmpeg libsm6 libxext6  -y

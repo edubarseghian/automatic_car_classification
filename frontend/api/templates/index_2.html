@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+    <head>
+        <title>ML API PROJECT #4 </title>
+        <meta name="viewport" content=
+        "width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href=
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+        <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css"
+        />
+        <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Roboto&amp;display=swap"
+        />
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for{'static', filename='style.css'} }}">
+    </head>
+
+    <body>
+        <header class="first">
+            Sprint Project #4 Mario Cuezzo AY22-03
+            <div class="header-inner"></div>
+        </header>
+        
+
+        <p>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            {% endwith %}
+        </p>
+        <div class="row">
+            <div class="column">       
+
+                <form method="post" action="/" enctype="multipart/form-data">
+        
+                    <div class="upload">
+                        <input
+                            name="file"
+                            type="file"
+                            title=""
+                            class="drop-here"
+                            accept="image/jpg, image/jpeg, image/png"
+                        />
+                        <div class="text text-drop">CLICK HERE OR DROP IMAGE</div>
+                        <div class="text text-upload">uploading</div>
+                        <svg class="progress-wrapper" width="300" height="300">
+                            <circle class="progress" r="115" cx="150" cy="150"></circle>
+                        </svg>
+                        <svg class="check-wrapper" width="130" height="130">
+                            <polyline class="check" points="100.2,40.2 51.5,88.8 29.8,67.5 " />
+                        </svg>
+                    </div>
+                    <p>
+                        <div class="button">
+                        <input  type="submit" value="Submit" style="vertical-align:middle">
+                        </div>
+                    </p>
+                </form>
+            </div>
+
+            <div class="column">
+                {% if filename %}
+                    <div  class="container">
+                        <img class="imagetest" src="{{url_for('app_router.display_image',filename=filename)}}" width="200" height="auto">
+                    </div>
+                {% if context['prediction'] %}
+
+                <div class="rows">
+                            <div class="col-25" >
+                            <label for="subject">Predicted class: {{ context['prediction'] }} </label><br>
+                            <label for="subject">Score: {{ context['score'] }} </label>
+                            </div>                   
+                </div>
+
+                <form id="form" method="POST" action="/feedback">   
+                            
+                            <button class="report" style="vertical-align:middle" type="submit">Report incorrect answer</button>
+                            
+                            <input name="report"  style="display: none;" value="{'filename': '{{ filename }}', 'prediction': '{{ context['prediction'] }}', 'score': {{ context['score'] }} }"/>
+                </form>
+
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+
+<script src="{{ url_for('static',filename='function.js') }}"> </script>
+        <footer>
+            <div class="footer-content">
+                <h3> Social Media   </h3>
+                
+                <ul class="socials"> 
+                    <li> <a href="https://www.linkedin.com/in/cuezzomario/x"  target=”_blank”> <i class="fa fa-linkedin-square"></i></a></li>
+                    <li> <a href="https://www.instagram.com/anyoneai_ok/"  target=”_blank” > <i class="fa fa-instagram"></i></a></li>
+                    
+                </ul>           
+            </div>
+            <div class="footer-bottom">
+
+                <p> Copyright &copy;2022 Mario Cuezzo and AnyoneAI. Desing by <span>Mario Cuezzo</span></p>
+            </div>
+
+            
+
+        
+        </footer>
+    </body>
+</html>

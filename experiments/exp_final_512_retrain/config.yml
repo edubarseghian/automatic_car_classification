@@ -1,0 +1,64 @@
+# Se arranca retrain con peso de model.12-0.0817-0.9778 con SGD y nesterov
+
+seed: 123
+
+data:
+  directory: "/home/app/src/data/train"
+  labels: "inferred"
+  label_mode: "categorical"
+  validation_split: 0
+  image_size: [240, 240]
+  batch_size: 32
+
+data_val:
+  directory: "/home/app/src/data/val"
+  labels: "inferred"
+  label_mode: "categorical"
+  validation_split: 0
+  image_size: [240, 240]
+  batch_size: 32
+
+model:
+  weights: "/home/app/src/experiments/exp_final_512_retrain/model.48-2.7936-0.3875.h5"
+  input_shape: [240, 240, 3]
+  classes: 512
+  dropout_rate: 0.4
+  data_aug_layer:
+    random_flip:
+      mode: "horizontal"
+      name: "random_flip_01"
+    random_rotation:
+      factor: 0.2
+      name: "random_rotation_01"
+    random_zoom:
+      height_factor: 0.25
+      width_factor: 0.25
+      name: "random_zoom_01"
+
+compile:
+  optimizer:
+    adam:
+      learning_rate: 0.0001
+      # momentum: 0.9
+      # nesterov: true
+
+  loss: "categorical_crossentropy"
+  metrics: ["accuracy"]
+
+fit:
+  epochs: 100
+  callbacks:
+    model_checkpoint:
+      filepath: "/home/app/src/experiments/exp_final_512_retrain/model.{epoch:02d}-{val_loss:.4f}-{val_accuracy:.4f}.h5"
+      save_best_only: false
+    tensor_board:
+      log_dir: "/home/app/src/experiments/exp_final_512_retrain/logs"
+    ReduceLROnPlateau:
+      monitor: val_loss #quantity to be monitored.
+      factor: 0.75 #factor by which the learning rate will be reduced. new_lr = lr * factor.
+      patience: 2 #number of epochs with no improvement after which learning rate will be reduced.
+      verbose: 1 # int. 0: quiet, 1: update messages.
+      mode: auto #auto' mode, the direction is automatically inferred from the name of the monitored quantity.
+      min_delta: 0.0001 #threshold for measuring the new optimum, to only focus on significant changes.
+      cooldown: 0 #number of epochs to wait before resuming normal operation after lr has been reduced.
+      min_lr: 0 #lower bound on the learning rate.
